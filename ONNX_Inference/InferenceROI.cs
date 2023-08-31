@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ONNX_INF_CORE
+namespace ONNX_Inference
 {
    class InferenceROI
     {

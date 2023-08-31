@@ -1,4 +1,4 @@
-﻿
+﻿using ONNX_Inference;
 
 namespace Test
 {
@@ -6,6 +6,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
+            ONNXCore onnx = new ONNXCore();
         }
     }
 }

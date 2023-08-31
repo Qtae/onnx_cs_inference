@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
-namespace ONNX_INF_CORE
+namespace ONNX_Inference
 {
 	public class ONNXCore
 	{
@@ -105,7 +106,7 @@ namespace ONNX_INF_CORE
             
 		}
 
-		protected bool Run(byte[] InputImageArray, byte[] outputImageArray)
+		protected bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
         {
 			try
             {
@@ -114,9 +115,6 @@ namespace ONNX_INF_CORE
 					System.Console.WriteLine("Model not loaded!");
 					return false;
 				}
-
-				float[] InputImgFloatArray = new float[InputImageArray.Length];
-				Parallel.For(0, InputImageArray.Length, i => InputImgFloatArray[i] = ((float)InputImageArray[i] / 255.0f));
 
 				int inputDimCheckVal = 1;
 				List<List<int>> inputDims = GetInputDims();
@@ -128,11 +126,16 @@ namespace ONNX_INF_CORE
 						inputDimCheckVal *= val;
                     }
                 }					
-				if (InputImageArray.Length != inputDimCheckVal)// compare with length --> 추후 Input check 함수를 따로 만들어야 함.
+				if (InputImageArray.Length != inputDimCheckVal)// compare with length -->
 				{
 					System.Console.WriteLine("Model input and image input is not compatible!");
 					return false;
                 }
+
+				float[] InputImgFloatArray = new float[InputImageArray.Length];
+				Parallel.For(0, InputImageArray.Length, i => InputImgFloatArray[i] = InputImageArray[i] / 255.0f);
+
+				Tensor<float> input = new DenseTensor<float>(new[] {batch, 640, 640, 3});
 
 				IReadOnlyCollection<NamedOnnxValue> inputs = new List<NamedOnnxValue>();
 				IReadOnlyCollection<NamedOnnxValue> outputs = new List<NamedOnnxValue>();

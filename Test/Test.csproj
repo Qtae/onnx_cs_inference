@@ -77,9 +77,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ONNX_INF_CORE\ONNX_INF_CORE.csproj">
+    <ProjectReference Include="..\ONNX_Inference\ONNX_Inference.csproj">
       <Project>{6962b8b2-5ef4-48cb-ae77-f3429a7db90d}</Project>
-      <Name>ONNX_INF_CORE</Name>
+      <Name>ONNX_Inference</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

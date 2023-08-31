@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.33927.289
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ONNX_INF_CORE", "ONNX_INF_CORE\ONNX_INF_CORE.csproj", "{6962B8B2-5EF4-48CB-AE77-F3429A7DB90D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ONNX_Inference", "ONNX_Inference\ONNX_Inference.csproj", "{6962B8B2-5EF4-48CB-AE77-F3429A7DB90D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{925CAD65-1EF7-4D33-AA1A-E233323F9603}"
 EndProject

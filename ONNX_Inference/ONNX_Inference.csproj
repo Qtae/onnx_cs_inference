@@ -8,8 +8,8 @@
     <ProjectGuid>{6962B8B2-5EF4-48CB-AE77-F3429A7DB90D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ONNX_INF_CORE</RootNamespace>
-    <AssemblyName>ONNX_INF_CORE</AssemblyName>
+    <RootNamespace>ONNX_Inference</RootNamespace>
+    <AssemblyName>ONNX_Inference</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
