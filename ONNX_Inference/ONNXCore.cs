@@ -59,7 +59,7 @@ namespace ONNX_Inference
 			return outputDims;
 		}
 
-		protected bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache, string cachePath = "")
+		public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache, string cachePath = "")
         {
             try
             {
@@ -106,7 +106,7 @@ namespace ONNX_Inference
             
 		}
 
-		protected bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
+		public bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
         {
 			try
             {
@@ -126,16 +126,18 @@ namespace ONNX_Inference
 						inputDimCheckVal *= val;
                     }
                 }					
-				if (InputImageArray.Length != inputDimCheckVal)// compare with length -->
-				{
-					System.Console.WriteLine("Model input and image input is not compatible!");
-					return false;
-                }
+				//if (InputImageArray.Length != inputDimCheckVal)// this has to be fixed..
+				//{
+				//	System.Console.WriteLine("Model input and image input is not compatible!");
+				//	return false;
+                //}
 
 				float[] InputImgFloatArray = new float[InputImageArray.Length];
 				Parallel.For(0, InputImageArray.Length, i => InputImgFloatArray[i] = InputImageArray[i] / 255.0f);
 
-				Tensor<float> input = new DenseTensor<float>(new[] {batch, 640, 640, 3});
+				int[] tensorShape = inputDims[0].ToArray(); //assume that their is only one input operator.
+				tensorShape[0] = batch;
+				Tensor<float> input = new DenseTensor<float>(tensorShape);
 
 				IReadOnlyCollection<NamedOnnxValue> inputs = new List<NamedOnnxValue>();
 				IReadOnlyCollection<NamedOnnxValue> outputs = new List<NamedOnnxValue>();
