@@ -121,7 +121,7 @@ namespace ONNX_Inference
             
 		}
 
-		public bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
+		protected bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
         {
 			try
             {

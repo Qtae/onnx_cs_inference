@@ -85,9 +85,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ADC.cs" />
+    <Compile Include="Bump3D.cs" />
     <Compile Include="InferenceROI.cs" />
     <Compile Include="ONNXCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Twinnet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

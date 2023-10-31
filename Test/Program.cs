@@ -18,11 +18,10 @@ namespace Test
         {
             string modelPath = "D:\\QTAE\\CS_ONNX_Inference\\models\\stitch.onnx";
             string cachePath = "D:\\QTAE\\CS_ONNX_Inference\\models\\";
-            ONNXCore onnx = new ONNXCore(modelPath, true, true, cachePath);
+            Bump3D bump3dAI = new Bump3D(modelPath, true, true, cachePath);
             byte[] tmp = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            byte[] res = bump3dAI.GetHeightMap(tmp);
             //bool res = onnx.LoadModel(modelPath, true, true, cachePath);
-            //res = onnx.Run(tmp, tmp, 4);
-            //if (res)
             System.Console.WriteLine("Success!");
             //IEnumerator test = Test();
             //test.MoveNext();
