@@ -131,8 +131,50 @@ namespace ONNX_Inference
                 throw;
             }
         }
+        public List<string> GetInputNames()
+        {
+            try
+            {
+                List<string> inputNames = new List<string>();
+                foreach (var key in InputMetaData.Keys) inputNames.Add(key);
+                return inputNames;
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in GetInputNames() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in GetInputNames() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+        public List<string> GetOutputNames()
+        {
+            try
+            {
+                List<string> outputNames = new List<string>();
+                foreach (var key in OutputMetaData.Keys) outputNames.Add(key);
+                return outputNames;
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in GetOutputNames() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in GetOutputNames() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
 
-		public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache,
+        public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache,
 			string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
         {
             try

@@ -57,7 +57,6 @@ namespace ONNX_Inference
                     List<NamedOnnxValue> inputs = new List<NamedOnnxValue>{ inputNamedOnnxValue };
                     IReadOnlyCollection<string> outputNames = new List<string> { "" };
                     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
-                    System.Console.WriteLine("!!");
                 }
 
                 return heightMap;
