@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.ML.OnnxRuntime;
@@ -15,14 +16,44 @@ namespace ONNX_Inference
 
 		public ONNXCore()
         {
-            OrtEnv.Instance();
+            try
+            {
+                OrtEnv.Instance();
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in ONNXCore() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in ONNXCore() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
 		public ONNXCore(string modelPath, bool bTensorRT, bool bUseCache,
             string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
 		{
-			OrtEnv.Instance();
-			LoadModel(modelPath, bTensorRT, bUseCache, cachePath, maxWorkspaceSize);
+			try
+            {
+                OrtEnv.Instance();
+                LoadModel(modelPath, bTensorRT, bUseCache, cachePath, maxWorkspaceSize);
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in ONNXCore() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in ONNXCore() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 
 		public bool IsModelLoaded
@@ -46,30 +77,60 @@ namespace ONNX_Inference
 		}
 		public List<List<int>> GetInputDims()
         {
-			List<List<int>> inputDims = new List<List<int>>();
-			IEnumerator<NodeMetadata> nodeMataDataEnum = InputMetaData.Values.GetEnumerator();
-			while (nodeMataDataEnum.MoveNext() == true)
+			try
             {
-				List<int> tmp = new List<int>();
-				int[] arr =  nodeMataDataEnum.Current.Dimensions;
-				foreach (int val in arr) tmp.Add(val);
-				inputDims.Add(tmp);
-			}
-			return inputDims;
+                List<List<int>> inputDims = new List<List<int>>();
+                IEnumerator<NodeMetadata> nodeMataDataEnum = InputMetaData.Values.GetEnumerator();
+                while (nodeMataDataEnum.MoveNext() == true)
+                {
+                    List<int> tmp = new List<int>();
+                    int[] arr = nodeMataDataEnum.Current.Dimensions;
+                    foreach (int val in arr) tmp.Add(val);
+                    inputDims.Add(tmp);
+                }
+                return inputDims;
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in GetInputDims() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in GetInputDims() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 		public List<List<int>> GetOutputDims()
         {
-			List<List<int>> outputDims = new List<List<int>>();
-			IEnumerator<NodeMetadata> nodeMataDataEnum = OutputMetaData.Values.GetEnumerator();
-			while (nodeMataDataEnum.MoveNext() == true)
-			{
-				List<int> tmp = new List<int>();
-				int[] arr = nodeMataDataEnum.Current.Dimensions;
-				foreach (int val in arr) tmp.Add(val);
-				outputDims.Add(tmp);
-			}
-			return outputDims;
-		}
+			try
+            {
+                List<List<int>> outputDims = new List<List<int>>();
+                IEnumerator<NodeMetadata> nodeMataDataEnum = OutputMetaData.Values.GetEnumerator();
+                while (nodeMataDataEnum.MoveNext() == true)
+                {
+                    List<int> tmp = new List<int>();
+                    int[] arr = nodeMataDataEnum.Current.Dimensions;
+                    foreach (int val in arr) tmp.Add(val);
+                    outputDims.Add(tmp);
+                }
+                return outputDims;
+            }
+            catch (OnnxRuntimeException ex)
+            {
+                System.Console.WriteLine("Error in GetOutputDims() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in GetOutputDims() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
 
 		public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache,
 			string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
@@ -111,63 +172,49 @@ namespace ONNX_Inference
 
 				return true;
 			}
-
             catch (OnnxRuntimeException ex)
 			{
 				System.Console.WriteLine("Error in LoadModel() :");
 				System.Console.WriteLine(ex.Message);
 				throw;
-			}
-            
-		}
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in LoadModel() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
 
-		protected bool Run(byte[] InputImageArray, byte[] outputImageArray, int batch)
+		protected IDisposableReadOnlyCollection<DisposableNamedOnnxValue> Run(
+			IReadOnlyCollection<NamedOnnxValue> namedInputs, IReadOnlyCollection<string> outputNames,
+			RunOptions runOptions = null)
         {
 			try
             {
 				if (!bIsModelLoaded)
 				{
 					System.Console.WriteLine("Model not loaded!");
-					return false;
+					return null;
 				}
 
-				int inputDimCheckVal = 1;
-				List<List<int>> inputDims = GetInputDims();
+				IDisposableReadOnlyCollection<DisposableNamedOnnxValue> result
+					= inferenceSession.Run(namedInputs, outputNames, runOptions);
 
-				foreach (List<int> inputDim in inputDims)
-                {
-					foreach(int val in inputDim)
-                    {
-						inputDimCheckVal *= val;
-                    }
-                }
-				//if (InputImageArray.Length != inputDimCheckVal)// this has to be fixed..
-				//{
-				//	System.Console.WriteLine("Model input and image input is not compatible!");
-				//	return false;
-                //}
-
-				float[] InputImgFloatArray = new float[InputImageArray.Length];
-				Parallel.For(0, InputImageArray.Length, i => InputImgFloatArray[i] = InputImageArray[i] / 255.0f);
-
-				int[] tensorShape = inputDims[0].ToArray(); //assume that their is only one input operator.
-				tensorShape[0] = batch;
-				Tensor<float> input = new DenseTensor<float>(tensorShape);
-
-				IReadOnlyCollection<NamedOnnxValue> inputs = new List<NamedOnnxValue>();
-				IReadOnlyCollection<NamedOnnxValue> outputs = new List<NamedOnnxValue>();
-
-				inferenceSession.Run(inputs, outputs);
-
-				return true;
+				return result;
             }
-
 			catch (OnnxRuntimeException ex)
 			{
-				System.Console.WriteLine("Error in LoadModel() :");
+				System.Console.WriteLine("Error in Run() :");
 				System.Console.WriteLine(ex.Message);
 				throw;
-			}
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine("Error in Run() :");
+                System.Console.WriteLine(ex.Message);
+                throw;
+            }
         }
 	}
 }
