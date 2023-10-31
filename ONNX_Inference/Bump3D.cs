@@ -23,6 +23,8 @@ namespace ONNX_Inference
                 int mFOV = input.GetLength(2);
                 int nFrames = input.GetLength(3);
 
+                byte[] heightMap = new byte[nImages * mFOV * nFrames];
+
                 List<List<int>> inputDims = GetInputDims();
                 if (inputDims[0][1] != nRow || inputDims[0][2] != mFOV || inputDims[0][3] != nFrames)
                     throw new Exception("Input dimension is invalid.");
@@ -31,7 +33,7 @@ namespace ONNX_Inference
                 tensorShape[0] = batch;
                 DenseTensor<float> inputTensor = new DenseTensor<float>(tensorShape);
 
-                for (int batchIdx = 0; batchIdx < nImages / batch + nImages % batch; ++batchIdx)
+                for (int batchIdx = 0; batchIdx < nImages / batch + (nImages % batch == 0 ? 0 : 1) ; ++batchIdx)
                 {
                     int batchStart = batchIdx * batch;
                     int batchEnd = (batchIdx + 1) * batch;
@@ -43,7 +45,7 @@ namespace ONNX_Inference
                             {
                                 for (int frameIdx = 0; frameIdx < nFrames; ++frameIdx)
                                 {
-                                    inputTensor[imgIdx, rowIdx, fovIdx, frameIdx, 1] =
+                                    inputTensor[imgIdx, rowIdx, fovIdx, frameIdx, 0] =
                                         input[imgIdx, rowIdx, fovIdx, frameIdx];
                                 }
                             }
@@ -55,10 +57,10 @@ namespace ONNX_Inference
                     List<NamedOnnxValue> inputs = new List<NamedOnnxValue>{ inputNamedOnnxValue };
                     IReadOnlyCollection<string> outputNames = new List<string> { "" };
                     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
+                    System.Console.WriteLine("!!");
                 }
 
-                byte[] result = { };
-                return result;
+                return heightMap;
             }
 
             catch (OnnxRuntimeException ex)
