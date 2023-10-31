@@ -240,6 +240,11 @@ namespace ONNX_Inference
 					return null;
 				}
 
+                if (runOptions == null)
+                {
+                    runOptions = new RunOptions();
+                }
+
 				IDisposableReadOnlyCollection<DisposableNamedOnnxValue> result
 					= inferenceSession.Run(namedInputs, outputNames, runOptions);
 

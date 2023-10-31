@@ -45,7 +45,7 @@ namespace ONNX_Inference
                             {
                                 for (int frameIdx = 0; frameIdx < nFrames; ++frameIdx)
                                 {
-                                    inputTensor[imgIdx, rowIdx, fovIdx, frameIdx, 0] =
+                                    inputTensor[imgIdx - batchStart, rowIdx, fovIdx, frameIdx, 0] =
                                         input[imgIdx, rowIdx, fovIdx, frameIdx];
                                 }
                             }
@@ -53,9 +53,9 @@ namespace ONNX_Inference
                     });
 
                     NamedOnnxValue inputNamedOnnxValue
-                        = NamedOnnxValue.CreateFromTensor("", inputTensor);
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
                     List<NamedOnnxValue> inputs = new List<NamedOnnxValue>{ inputNamedOnnxValue };
-                    IReadOnlyCollection<string> outputNames = new List<string> { "" };
+                    IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
                     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
                 }
 
