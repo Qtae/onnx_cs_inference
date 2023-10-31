@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\SixLabors.ImageSharp.3.0.2\build\SixLabors.ImageSharp.props" Condition="Exists('..\packages\SixLabors.ImageSharp.3.0.2\build\SixLabors.ImageSharp.props')" />
   <Import Project="..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.props" Condition="Exists('..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -35,6 +36,25 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ML.OnnxRuntime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=f27f157f0a5b7bb6, processorArchitecture=MSIL">
@@ -84,6 +104,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.ML.OnnxRuntime.Managed.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Managed.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ML.OnnxRuntime.Managed.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Managed.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.targets'))" />
+    <Error Condition="!Exists('..\packages\SixLabors.ImageSharp.3.0.2\build\SixLabors.ImageSharp.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SixLabors.ImageSharp.3.0.2\build\SixLabors.ImageSharp.props'))" />
   </Target>
   <Import Project="..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.targets" Condition="Exists('..\packages\Microsoft.ML.OnnxRuntime.Gpu.1.10.0\build\netstandard1.1\Microsoft.ML.OnnxRuntime.Gpu.targets')" />
 </Project>

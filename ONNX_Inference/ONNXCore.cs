@@ -13,6 +13,18 @@ namespace ONNX_Inference
 		protected bool bIsModelLoaded = false;
 		protected bool bIs16bitModel = false;
 
+		public ONNXCore()
+        {
+            OrtEnv.Instance();
+        }
+
+		public ONNXCore(string modelPath, bool bTensorRT, bool bUseCache,
+            string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
+		{
+			OrtEnv.Instance();
+			LoadModel(modelPath, bTensorRT, bUseCache, cachePath, maxWorkspaceSize);
+        }
+
 		public bool IsModelLoaded
 		{
 			get { return bIsModelLoaded; }
@@ -59,7 +71,8 @@ namespace ONNX_Inference
 			return outputDims;
 		}
 
-		public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache, string cachePath = "")
+		public bool LoadModel(string modelPath, bool bTensorRT, bool bUseCache,
+			string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
         {
             try
             {
@@ -72,11 +85,13 @@ namespace ONNX_Inference
 					{
 						["device_id"] = "0",
 						["trt_fp16_enable"] = "true",
+						["trt_max_workspace_size"] = maxWorkspaceSize.ToString(),
 						["trt_engine_cache_enable"] = bUseCache ? "true" : "false",
 						["trt_engine_cache_path"] = cachePath == "" ? modelPath : cachePath
 					};
 					trtOptions.UpdateOptions(providerOptionsDict);
 					sessionOptions.AppendExecutionProvider_Tensorrt(trtOptions);
+					trtOptions.Close();
 					sessionOptions.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_EXTENDED;
 				}
 				else return false;
@@ -125,7 +140,7 @@ namespace ONNX_Inference
                     {
 						inputDimCheckVal *= val;
                     }
-                }					
+                }
 				//if (InputImageArray.Length != inputDimCheckVal)// this has to be fixed..
 				//{
 				//	System.Console.WriteLine("Model input and image input is not compatible!");
