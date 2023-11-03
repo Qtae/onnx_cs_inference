@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Threading.Tasks;
 using ONNX_Inference;
 
@@ -54,7 +55,7 @@ namespace Test
 
             Console.WriteLine("==========Load Model...==========");
             string cachePath = rootPath + "models\\";
-            string modelPath = cachePath + "3d_bump.onnx";
+            string modelPath = cachePath + "3d_bump_10.onnx";
             Bump3D bump3dAI = new Bump3D(modelPath, true, true, cachePath);
             int batch = 32;
             Console.WriteLine("==========Run Inference...==========");
@@ -79,6 +80,26 @@ namespace Test
             // res = bump3dAI.GetHeightMap(tmp, batch);
             // sw.Stop();
             // Console.WriteLine("소요 시간: {0}ms", sw.ElapsedMilliseconds);
+
+            Console.WriteLine("==========Save result...==========");
+            for (int i = 0; i < 1000; ++i)
+            {
+                Bitmap result = new Bitmap(12, 12);
+                for (int x = 0; x < 12; ++x)
+                {
+                    for (int y = 0; y < 12; ++y)
+                    {
+                        float pixelFloat = res[i, x, y] * 255.0f / 56.0f;
+                        int pixel = (int)pixelFloat;
+                        Color col = Color.FromArgb(pixel, pixel, pixel);
+                        result.SetPixel(y, x, col);
+                    }
+                }
+                result.Save(rootPath + "test_res\\" + i.ToString() + ".bmp");
+            }
+
+
+
             System.Console.WriteLine("==========Success!==========");
             System.Console.ReadKey();
         }

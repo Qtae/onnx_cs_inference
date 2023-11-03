@@ -38,7 +38,32 @@ namespace ONNX_Inference
                 int lengthPerBatch = lengthPerImage * batch;
                 int outputLengthPerBatch = outputLengthPerImage * batch;
 
-                // Parallel.For(0, nImages / batch, batchIdx =>
+                Parallel.For(0, nImages / batch, batchIdx =>
+                {
+                    float[] batchInput = new float[lengthPerBatch];
+                    Buffer.BlockCopy(input, batchIdx * lengthPerBatch * 4, batchInput, 0, lengthPerBatch * 4);
+                    Memory<float> inputMem = new Memory<float>(batchInput);
+                    DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
+                
+                    int batchStart = batchIdx * batch;
+                    int batchEnd = (batchIdx + 1) * batch;
+                
+                    NamedOnnxValue inputNamedOnnxValue
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
+                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue>{ inputNamedOnnxValue };
+                    IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
+                    IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
+                
+                    Buffer.BlockCopy(
+                        res.ToArray()[0].AsTensor<float>().ToArray(),
+                        0,
+                        heightMap,
+                        batchIdx * outputLengthPerBatch * 4,
+                        outputLengthPerBatch * 4
+                        );
+                });
+
+                // for (int batchIdx = 0; batchIdx < nImages / batch; ++batchIdx)
                 // {
                 //     float[] batchInput = new float[lengthPerBatch];
                 //     Buffer.BlockCopy(input, batchIdx * lengthPerBatch * 4, batchInput, 0, lengthPerBatch * 4);
@@ -50,7 +75,7 @@ namespace ONNX_Inference
                 // 
                 //     NamedOnnxValue inputNamedOnnxValue
                 //         = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
-                //     List<NamedOnnxValue> inputs = new List<NamedOnnxValue>{ inputNamedOnnxValue };
+                //     List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
                 //     IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
                 //     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
                 // 
@@ -61,32 +86,7 @@ namespace ONNX_Inference
                 //         batchIdx * outputLengthPerBatch * 4,
                 //         outputLengthPerBatch * 4
                 //         );
-                // });
-
-                for (int batchIdx = 0; batchIdx < nImages / batch; ++batchIdx)
-                {
-                    float[] batchInput = new float[lengthPerBatch];
-                    Buffer.BlockCopy(input, batchIdx * lengthPerBatch * 4, batchInput, 0, lengthPerBatch * 4);
-                    Memory<float> inputMem = new Memory<float>(batchInput);
-                    DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
-
-                    int batchStart = batchIdx * batch;
-                    int batchEnd = (batchIdx + 1) * batch;
-                
-                    NamedOnnxValue inputNamedOnnxValue
-                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
-                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
-                    IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
-                    IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
-
-                    Buffer.BlockCopy(
-                        res.ToArray()[0].AsTensor<float>().ToArray(),
-                        0,
-                        heightMap,
-                        batchIdx * outputLengthPerBatch * 4,
-                        outputLengthPerBatch * 4
-                        );
-                }
+                // }
 
                 int residue = nImages % batch;
                 tensorShape[0] = residue;
