@@ -140,24 +140,6 @@ namespace Test
             float[,] res = bump3dAI.RunADCandGetSoftmax(tmp, batch);
             sw.Stop();
             Console.WriteLine("소요 시간: {0}ms", sw.ElapsedMilliseconds);
-
-            Console.WriteLine("==========Save result...==========");
-            for (int i = 0; i < 1000; ++i)
-            {
-                Bitmap result = new Bitmap(12, 12);
-                for (int x = 0; x < 12; ++x)
-                {
-                    for (int y = 0; y < 12; ++y)
-                    {
-                        float pixelFloat = res[i, x, y] * 255.0f / 56.0f;
-                        int pixel = (int)pixelFloat;
-                        Color col = Color.FromArgb(pixel, pixel, pixel);
-                        result.SetPixel(y, x, col);
-                    }
-                }
-                result.Save(rootPath + "test_res\\" + i.ToString() + ".bmp");
-            }
-
             System.Console.WriteLine("==========Success!==========");
             System.Console.ReadKey();
         }

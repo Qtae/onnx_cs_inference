@@ -1,7 +1,9 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
 namespace ONNX_Inference
 {
@@ -28,9 +30,71 @@ namespace ONNX_Inference
                 List<List<int>> outputDims = GetOutputDims();
                 int nClass = outputDims[0][1];
 
-                float[,] res = new float[nImages, nClass];
+                float[,] softmx = new float[nImages, nClass];
 
-                return res;
+                int[] tensorShape = inputDims[0].ToArray(); //assume that their is only one input operator.
+                tensorShape[0] = 1;
+                int lengthPerImage = 1;
+                foreach (int var in tensorShape) lengthPerImage *= var;
+                tensorShape[0] = batch;
+                int lengthPerBatch = lengthPerImage * batch;
+                int outputLengthPerBatch = nClass * batch;
+
+                Parallel.For(0, nImages / batch, batchIdx =>
+                {
+                    float[] batchInput = new float[lengthPerBatch];
+                    Buffer.BlockCopy(input, batchIdx * lengthPerBatch * 4, batchInput, 0, lengthPerBatch * 4);
+                    Memory<float> inputMem = new Memory<float>(batchInput);
+                    DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
+
+                    int batchStart = batchIdx * batch;
+                    int batchEnd = (batchIdx + 1) * batch;
+
+                    NamedOnnxValue inputNamedOnnxValue
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
+                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
+                    IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
+                    IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
+
+                    Buffer.BlockCopy(
+                        res.ToArray()[0].AsTensor<float>().ToArray(),
+                        0,
+                        softmx,
+                        batchIdx * outputLengthPerBatch * 4,
+                        outputLengthPerBatch * 4
+                        );
+                });
+
+                int residue = nImages % batch;
+                tensorShape[0] = residue;
+                int lengthOfResidue = lengthPerImage * residue;
+                int outputLengthOfResidue = nClass * residue;
+
+                if (residue != 0)
+                {
+                    int batchStart = nImages - residue;
+
+                    float[] batchInput = new float[lengthOfResidue];
+                    Buffer.BlockCopy(input, batchStart * lengthPerImage * 4, batchInput, 0, lengthOfResidue * 4);
+                    Memory<float> inputMem = new Memory<float>(batchInput);
+                    DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
+
+                    NamedOnnxValue inputNamedOnnxValue
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
+                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
+                    IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
+                    IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
+
+                    Buffer.BlockCopy(
+                        res.ToArray()[0].AsTensor<float>().ToArray(),
+                        0,
+                        softmx,
+                        batchStart * nClass * 4,
+                        outputLengthOfResidue * 4
+                        );
+                }
+
+                return softmx;
             }
             catch (OnnxRuntimeException ex)
             {
