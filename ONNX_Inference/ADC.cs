@@ -63,6 +63,7 @@ namespace ONNX_Inference
                         batchIdx * outputLengthPerBatch * 4,
                         outputLengthPerBatch * 4
                         );
+                    res.Dispose();
                 });
 
                 int residue = nImages % batch;
@@ -92,6 +93,7 @@ namespace ONNX_Inference
                         batchStart * nClass * 4,
                         outputLengthOfResidue * 4
                         );
+                    res.Dispose();
                 }
 
                 return softmx;

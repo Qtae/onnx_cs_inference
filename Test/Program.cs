@@ -103,7 +103,7 @@ namespace Test
         static void Main(string[] args)
         {
             Console.WriteLine("==========Initializing...==========");
-            float[,,,] tmp = new float[30, 32, 32, 3];
+            float[,,,] tmp = new float[10, 200, 200, 3];
 
             string rootPath = "D:\\QTAE\\CS_ONNX_Inference\\";
             string testDataPath = rootPath + "testset_classification\\";
@@ -116,9 +116,9 @@ namespace Test
                 if (imgFile.Extension.ToLower().CompareTo(".png") == 0)
                 {
                     Bitmap img = new Bitmap(imgFile.FullName);
-                    for (int i = 0; i < 32; ++i)
+                    for (int i = 0; i < 200; ++i)
                     {
-                        for (int j = 0; j < 32; ++j)
+                        for (int j = 0; j < 200; ++j)
                         {
                             tmp[imgIdx, j, i, 0] = img.GetPixel(i, j).R;
                             tmp[imgIdx, j, i, 1] = img.GetPixel(i, j).G;
@@ -133,7 +133,7 @@ namespace Test
             string cachePath = rootPath + "models\\";
             string modelPath = cachePath + "classification.onnx";
             ADC bump3dAI = new ADC(modelPath, true, true, cachePath);
-            int batch = 4;
+            int batch = 2;
             Console.WriteLine("==========Run Inference...==========");
             Stopwatch sw = new Stopwatch();
             sw.Start();
