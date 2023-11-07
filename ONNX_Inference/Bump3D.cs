@@ -14,7 +14,7 @@ namespace ONNX_Inference
         public Bump3D(string modelPath, bool bTensorRT, bool bUseCache, string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
             : base(modelPath, bTensorRT, bUseCache, cachePath, maxWorkspaceSize) { }
 
-        public float[,,] GetHeightMap(float[,,,] input, int batch)
+        public float[,,] CaculateHeightMap(float[,,,] input, int batch)
         {
             try
             {

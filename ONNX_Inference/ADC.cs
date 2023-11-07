@@ -14,7 +14,7 @@ namespace ONNX_Inference
         public ADC(string modelPath, bool bTensorRT, bool bUseCache, string cachePath = "", ulong maxWorkspaceSize = 1ul << 60)
             : base(modelPath, bTensorRT, bUseCache, cachePath, maxWorkspaceSize) { }
 
-        public float[,] RunADCandGetSoftmax(float[,,,] input, int batch)
+        public float[,] RunADC(float[,,,] input, int batch)
         {
             try
             {
