@@ -10,7 +10,7 @@ namespace Test
 {
     class Program
     {
-        /*
+        /* Bump 3d
         static void Main(string[] args)
         {
             Console.WriteLine("==========Initializing...==========");
@@ -99,7 +99,7 @@ namespace Test
         }
         */
 
-
+        /* ADC
         static void Main(string[] args)
         {
             Console.WriteLine("==========Initializing...==========");
@@ -138,6 +138,68 @@ namespace Test
             Stopwatch sw = new Stopwatch();
             sw.Start();
             float[,] res = adc.RunADC(tmp, batch);
+            sw.Stop();
+            Console.WriteLine("소요 시간: {0}ms", sw.ElapsedMilliseconds);
+            System.Console.WriteLine("==========Success!==========");
+            System.Console.ReadKey();
+        }
+        */
+        static void Main(string[] args)
+        {
+            Console.WriteLine("==========Initializing...==========");
+            float[,,,] inspInput = new float[9, 480, 480, 1];
+            float[,,,] refInput = new float[9, 480, 480, 1];
+
+            string rootPath = "D:\\QTAE\\CS_ONNX_Inference\\";
+            string testDataInspPath = rootPath + "testset_twinnet\\insp\\";
+            string testDataRefPath = rootPath + "testset_twinnet\\ref\\";
+
+            Console.WriteLine("==========Load Images...==========");
+            System.IO.DirectoryInfo testDirInfo = new System.IO.DirectoryInfo(testDataInspPath);
+            int imgIdx = 0;
+            foreach (System.IO.FileInfo imgFile in testDirInfo.GetFiles())
+            {
+                if (imgFile.Extension.ToLower().CompareTo(".png") == 0)
+                {
+                    Bitmap img = new Bitmap(imgFile.FullName);
+                    for (int i = 0; i < 480; ++i)
+                    {
+                        for (int j = 0; j < 480; ++j)
+                        {
+                            inspInput[imgIdx, j, i, 0] = img.GetPixel(i, j).R;
+                        }
+                    }
+                }
+                imgIdx++;
+            }
+
+            testDirInfo = new System.IO.DirectoryInfo(testDataRefPath);
+            imgIdx = 0;
+            foreach (System.IO.FileInfo imgFile in testDirInfo.GetFiles())
+            {
+                if (imgFile.Extension.ToLower().CompareTo(".png") == 0)
+                {
+                    Bitmap img = new Bitmap(imgFile.FullName);
+                    for (int i = 0; i < 480; ++i)
+                    {
+                        for (int j = 0; j < 480; ++j)
+                        {
+                            refInput[imgIdx, j, i, 0] = img.GetPixel(i, j).R;
+                        }
+                    }
+                }
+                imgIdx++;
+            }
+
+            Console.WriteLine("==========Load Model...==========");
+            string cachePath = rootPath + "models\\";
+            string modelPath = cachePath + "480_twin.onnx";
+            Twinnet twinnet = new Twinnet(modelPath, true, true, cachePath);
+            int batch = 2;
+            Console.WriteLine("==========Run Inference...==========");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            float[,,,] res = twinnet.RunTwinnet(inspInput, refInput, batch);
             sw.Stop();
             Console.WriteLine("소요 시간: {0}ms", sw.ElapsedMilliseconds);
             System.Console.WriteLine("==========Success!==========");

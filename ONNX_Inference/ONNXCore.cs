@@ -22,14 +22,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in ONNXCore() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in ONNXCore() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in ONNXCore() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in ONNXCore() : " + ex.Message);
                 throw;
             }
         }
@@ -44,14 +42,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in ONNXCore() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in ONNXCore() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in ONNXCore() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in ONNXCore() : " + ex.Message);
                 throw;
             }
         }
@@ -75,6 +71,7 @@ namespace ONNX_Inference
 		{
 			get { return outputMetaData; }
 		}
+
 		public List<List<int>> GetInputDims()
         {
 			try
@@ -92,14 +89,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in GetInputDims() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetInputDims() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in GetInputDims() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetInputDims() : " + ex.Message);
                 throw;
             }
         }
@@ -120,14 +115,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in GetOutputDims() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetOutputDims() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in GetOutputDims() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetOutputDims() : " + ex.Message);
                 throw;
             }
         }
@@ -141,14 +134,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in GetInputNames() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetInputNames() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in GetInputNames() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetInputNames() : " + ex.Message);
                 throw;
             }
         }
@@ -162,14 +153,12 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in GetOutputNames() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetOutputNames() : " + ex.Message);
                 throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in GetOutputNames() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in GetOutputNames() : " + ex.Message);
                 throw;
             }
         }
@@ -216,14 +205,12 @@ namespace ONNX_Inference
 			}
             catch (OnnxRuntimeException ex)
 			{
-				System.Console.WriteLine("Error in LoadModel() :");
-				System.Console.WriteLine(ex.Message);
+				System.Console.WriteLine("Error in LoadModel() : " + ex.Message);
 				throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in LoadModel() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in LoadModel() : " + ex.Message);
                 throw;
             }
         }
@@ -252,14 +239,12 @@ namespace ONNX_Inference
             }
 			catch (OnnxRuntimeException ex)
 			{
-				System.Console.WriteLine("Error in Run() :");
-				System.Console.WriteLine(ex.Message);
+				System.Console.WriteLine("Error in Run() : " + ex.Message);
 				throw;
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in Run() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in Run() : " + ex.Message);
                 throw;
             }
         }

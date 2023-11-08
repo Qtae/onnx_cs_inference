@@ -28,7 +28,7 @@ namespace ONNX_Inference
 
                 List<List<int>> inputDims = GetInputDims();
                 if (inputDims[0][1] != nRow || inputDims[0][2] != nFOV || inputDims[0][3] != nFrames)
-                    throw new Exception("Input dimension is invalid.");
+                    throw new Exception("Input dimension of bump 3d ai model and image dimension are different.");
 
                 int[] tensorShape = inputDims[0].ToArray(); //assume that their is only one input operator.
                 tensorShape[0] = 1;
@@ -97,15 +97,13 @@ namespace ONNX_Inference
 
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in GetHeightMap() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in CaculateHeightMap() : " + ex.Message);
                 throw;
             }
 
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in GetHeightMap() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in CaculateHeightMap() : " + ex.Message);
                 throw;
             }
         }

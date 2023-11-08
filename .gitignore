@@ -190,3 +190,4 @@ models/
 testset/
 test_res/
 testset_classification/
+testset_twinnet/

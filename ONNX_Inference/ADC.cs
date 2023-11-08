@@ -25,7 +25,7 @@ namespace ONNX_Inference
 
                 List<List<int>> inputDims = GetInputDims();
                 if (inputDims[0][1] != nHeight || inputDims[0][2] != nWidth || inputDims[0][3] != nChannel)
-                    throw new Exception("Input dimension is invalid.");
+                    throw new Exception("Input dimension of adc model and image dimension are different.");
 
                 List<List<int>> outputDims = GetOutputDims();
                 int nClass = outputDims[0][1];
@@ -100,15 +100,13 @@ namespace ONNX_Inference
             }
             catch (OnnxRuntimeException ex)
             {
-                System.Console.WriteLine("Error in RunADCandGetSoftmax() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in RunADC() : " + ex.Message);
                 throw;
             }
 
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error in RunADCandGetSoftmax() :");
-                System.Console.WriteLine(ex.Message);
+                System.Console.WriteLine("Error in RunADC() : " + ex.Message);
                 throw;
             }
         }
