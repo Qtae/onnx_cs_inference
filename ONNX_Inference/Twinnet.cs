@@ -59,12 +59,11 @@ namespace ONNX_Inference
                     DenseTensor<float> inputTensorInsp = new DenseTensor<float>(inputMemInsp, tensorShape);
                     DenseTensor<float> inputTensorRef = new DenseTensor<float>(inputMemRef, tensorShape);
 
-                    int batchStart = batchIdx * batch;
-                    int batchEnd = (batchIdx + 1) * batch;
-
-                    NamedOnnxValue inputNamedOnnxValue
-                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
-                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
+                    NamedOnnxValue inputNamedOnnxValueInsp
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensorInsp);
+                    NamedOnnxValue inputNamedOnnxValueRef
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[1], inputTensorRef);
+                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValueInsp, inputNamedOnnxValueRef };
                     IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
                     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
 
@@ -86,14 +85,20 @@ namespace ONNX_Inference
                 {
                     int batchStart = nImages - residue;
 
-                    float[] batchInput = new float[lengthOfResidue];
-                    Buffer.BlockCopy(inspInput, batchStart * lengthPerImage * 4, batchInput, 0, lengthOfResidue * 4);
-                    Memory<float> inputMem = new Memory<float>(batchInput);
-                    DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
+                    float[] batchInputInsp = new float[lengthOfResidue];
+                    float[] batchInputRef = new float[lengthOfResidue];
+                    Buffer.BlockCopy(inspInput, batchStart * lengthPerImage * 4, batchInputInsp, 0, lengthOfResidue * 4);
+                    Buffer.BlockCopy(refInput, batchStart * lengthPerImage * 4, batchInputRef, 0, lengthOfResidue * 4);
+                    Memory<float> inputMemInsp = new Memory<float>(batchInputInsp);
+                    Memory<float> inputMemRef = new Memory<float>(batchInputRef);
+                    DenseTensor<float> inputTensorInsp = new DenseTensor<float>(inputMemInsp, tensorShape);
+                    DenseTensor<float> inputTensorRef = new DenseTensor<float>(inputMemRef, tensorShape);
 
-                    NamedOnnxValue inputNamedOnnxValue
-                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
-                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
+                    NamedOnnxValue inputNamedOnnxValueInsp
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensorInsp);
+                    NamedOnnxValue inputNamedOnnxValueRef
+                        = NamedOnnxValue.CreateFromTensor(GetInputNames()[1], inputTensorRef);
+                    List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValueInsp, inputNamedOnnxValueRef };
                     IReadOnlyCollection<string> outputNames = new List<string> { GetOutputNames()[0] };
                     IDisposableReadOnlyCollection<DisposableNamedOnnxValue> res = Run(inputs, outputNames);
 

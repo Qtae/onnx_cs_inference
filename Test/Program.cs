@@ -153,13 +153,14 @@ namespace Test
             string rootPath = "D:\\QTAE\\CS_ONNX_Inference\\";
             string testDataInspPath = rootPath + "testset_twinnet\\insp\\";
             string testDataRefPath = rootPath + "testset_twinnet\\ref\\";
+            string testDataResPath = rootPath + "testset_twinnet\\res\\";
 
             Console.WriteLine("==========Load Images...==========");
             System.IO.DirectoryInfo testDirInfo = new System.IO.DirectoryInfo(testDataInspPath);
             int imgIdx = 0;
             foreach (System.IO.FileInfo imgFile in testDirInfo.GetFiles())
             {
-                if (imgFile.Extension.ToLower().CompareTo(".png") == 0)
+                if (imgFile.Extension.ToLower().CompareTo(".bmp") == 0)
                 {
                     Bitmap img = new Bitmap(imgFile.FullName);
                     for (int i = 0; i < 480; ++i)
@@ -177,7 +178,7 @@ namespace Test
             imgIdx = 0;
             foreach (System.IO.FileInfo imgFile in testDirInfo.GetFiles())
             {
-                if (imgFile.Extension.ToLower().CompareTo(".png") == 0)
+                if (imgFile.Extension.ToLower().CompareTo(".bmp") == 0)
                 {
                     Bitmap img = new Bitmap(imgFile.FullName);
                     for (int i = 0; i < 480; ++i)
@@ -201,6 +202,25 @@ namespace Test
             sw.Start();
             float[,,,] res = twinnet.RunTwinnet(inspInput, refInput, batch);
             sw.Stop();
+
+            for (int i = 0; i < res.GetLength(0); ++i)
+            {
+                Bitmap bitmapImg = new Bitmap(res.GetLength(2), res.GetLength(1));
+                for (int y = 0; y < res.GetLength(1); ++y)
+                {
+                    for (int x = 0; x < res.GetLength(2); ++x)
+                    {
+                        double denom = Math.Exp(res[i, y, x, 0]) + Math.Exp(res[i, y, x, 1]);
+                        double e0 = Math.Exp(res[i, y, x, 0]) / denom;
+                        double e1 = Math.Exp(res[i, y, x, 1]) / denom;
+                        if (res[i, y, x, 0] > res[i, y, x, 1])
+                            bitmapImg.SetPixel(x, y, Color.Red);
+                        else
+                            bitmapImg.SetPixel(x, y, Color.Black);
+                    }
+                }
+                bitmapImg.Save(testDataResPath + i.ToString() + ".bmp");
+            }
             Console.WriteLine("소요 시간: {0}ms", sw.ElapsedMilliseconds);
             System.Console.WriteLine("==========Success!==========");
             System.Console.ReadKey();

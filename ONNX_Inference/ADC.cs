@@ -47,9 +47,6 @@ namespace ONNX_Inference
                     Memory<float> inputMem = new Memory<float>(batchInput);
                     DenseTensor<float> inputTensor = new DenseTensor<float>(inputMem, tensorShape);
 
-                    int batchStart = batchIdx * batch;
-                    int batchEnd = (batchIdx + 1) * batch;
-
                     NamedOnnxValue inputNamedOnnxValue
                         = NamedOnnxValue.CreateFromTensor(GetInputNames()[0], inputTensor);
                     List<NamedOnnxValue> inputs = new List<NamedOnnxValue> { inputNamedOnnxValue };
